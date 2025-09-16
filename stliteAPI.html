@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Stlite app</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.1/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.1/build/stlite.js"
+mount(
+  {
+    requirements: ["matplotlib", "requests", "pydeck"],
+    entrypoint: "streamlit_app.py",
+    files: {
+"streamlit_app.py": `import streamlit as st
+
+st.write(""" Copied from https://github.com/streamlit/streamlit/tree/1.35.0/e2e/scripts
+""")
+`,
+"pages/iframe_resizer.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+x = st.slider("Enter a number", 0, 20, 0)
+
+for i in range(x):
+    st.write("Hello example")
+`,
+"pages/empty_labels.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+a, b = st.columns(2)
+a.selectbox("With label", [])
+b.selectbox("", [])  # No label
+`,
+"pages/redisplayed_widgets.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+from streamlit import runtime
+
+if runtime.exists():
+
+    if st.checkbox("checkbox 1"):
+        if st.checkbox("checkbox 2"):
+            st.write("hello")
+
+        if st.checkbox("checkbox 3", key="c3"):
+            st.write("goodbye")
+`,
+"pages/session_state_frontend_sync.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+from streamlit import runtime
+
+if runtime.exists():
+    if "checkbox1" not in st.session_state:
+        st.session_state.checkbox1 = True
+
+    def on_checkbox_change(changed_checkbox_number):
+        if changed_checkbox_number == 1:
+            st.session_state.checkbox2 = False
+        elif changed_checkbox_number == 2:
+            st.session_state.checkbox1 = False
+
+    st.checkbox(
+        label="Checkbox1", key="checkbox1", on_change=on_checkbox_change, args=(1,)
+    )
+    st.checkbox(
+        label="Checkbox2", key="checkbox2", on_change=on_checkbox_change, args=(2,)
+    )
+`,
+"pages/st_columns.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+CAT_IMAGE = "https://images.unsplash.com/photo-1552933529-e359b2477252?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=950&q=80"
+
+if st.button("Layout should not shift when this is pressed"):
+    st.write("Pressed!")
+
+# Same-width columns
+c1, c2, c3 = st.columns(3)
+c1.image(CAT_IMAGE)
+c2.image(CAT_IMAGE)
+c3.image(CAT_IMAGE)
+
+
+# Variable-width columns
+for c in st.columns((1, 2, 3, 4)):
+    c.image(CAT_IMAGE)
+
+# Various column gaps
+c4, c5, c6 = st.columns(3, gap="small")
+c4.image(CAT_IMAGE)
+c5.image(CAT_IMAGE)
+c6.image(CAT_IMAGE)
+
+c7, c8, c9 = st.columns(3, gap="medium")
+c7.image(CAT_IMAGE)
+c8.image(CAT_IMAGE)
+c9.image(CAT_IMAGE)
+
+c10, c11, c12 = st.columns(3, gap="large")
+c10.image(CAT_IMAGE)
+c11.image(CAT_IMAGE)
+c12.image(CAT_IMAGE)
+`,
+"pages/st_disabled.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from datetime import date, time
+
+import streamlit as st
+
+options = ("female", "male")
+
+w1 = st.checkbox("I am human", True)
+
+w2 = st.slider("Age", 0, 100, 25, 1)
+st.write("Value 1:", w2)
+
+w3 = st.text_area("Comments", "Streamlit is awesomeness!")
+
+w4 = st.button("Click me")
+
+w5 = st.radio("Gender", options, 1)
+
+w6 = st.text_input("Text input widget", "i iz input")
+
+w7 = st.selectbox("Options", options, 1)
+
+w8 = st.time_input("Set an alarm for", time(8, 45))
+
+w9 = st.date_input("A date to celebrate", date(2019, 7, 6))
+`,
+"pages/st_disconnect.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+`,
+"pages/st_download_button.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from random import random
+
+import streamlit as st
+
+st.download_button(
+    "Download button label",
+    data="Hello world!",
+    file_name="hello.txt",
+)
+
+st.download_button(
+    "Download button label",
+    data="Hello world!",
+    file_name="hello.txt",
+    key="disabled_dl_button",
+    disabled=True,
+)
+
+st.download_button(
+    "Download RAR archive file",
+    data=b"bytes",
+    file_name="archive.rar",
+    mime="application/vnd.rar",
+)
+
+st.download_button(
+    "Download button with use_container_width=True",
+    data="Hello world!",
+    file_name="hello.txt",
+    use_container_width=True,
+)
+
+st.download_button(
+    "Download button with help text and use_container_width=True",
+    data="Hello world!",
+    file_name="hello.txt",
+    use_container_width=True,
+    help="Example help text",
+)
+
+st.download_button(
+    "Primary download button",
+    data="Hello world!",
+    file_name="hello.txt",
+    type="primary",
+)
+
+random_str = str(random())
+clicked = st.download_button(label="Download random text", data=random_str)
+
+st.write(f"value: {clicked}")
+`,
+"pages/st_exception.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+from streamlit.errors import StreamlitAPIException
+
+e = RuntimeError("This exception message is awesome!")
+st.exception(e)
+
+e = StreamlitAPIException(
+    """
+Cannot hash object of type \`_thread.lock\`, found in the return value of
+\`get_data()\`.
+
+While caching the return value of \`get_data()\`, Streamlit encountered an
+object of type \`_thread.lock\`, which it does not know how to hash.
+
+To address this, please try helping Streamlit understand how to hash that type
+by passing the \`hash_funcs\` argument into \`@st.cache\`. For example:
+
+\`\`\`
+@st.cache(hash_funcs={_thread.lock: my_hash_func_that_is_some_riduculously_long_name})
+def my_func(...):
+    ...
+\`\`\`
+
+If you don't know where the object of type  \`_thread.lock\` is coming
+from, try looking at the hash chain below for an object that you do recognize,
+then pass that to \`hash_funcs\` instead:
+
+\`\`\`
+Object of type _thread.lock: <unlocked _thread.lock object at 0x1392ad690>
+Object of type builtins.tuple: ('I am another ridiculously long string that will take up space', <unlocked _thread.lock object at 0x1392ad690>)
+Object of type builtins.dict: {'I am another ridiculously long string that will take up space': <unlocked _thread.lock object at 0x1392ad690>}
+Object of type builtins.tuple: ('I am a ridiculously long string that will take up space', {'I am another ridiculously long string that will take up space': <unlocked _thread.lock object at 0x1392ad690>})
+Object of type builtins.dict: {'I am a ridiculously long string that will take up space': {'I am another ridiculously long string that will take up space': <unlocked _thread.lock object at 0x1392ad690>}}
+
+\`\`\`
+
+Please see the \`hash_funcs\` [documentation](https://docs.streamlit.io/library/advanced-features/caching#the-hash_funcs-parameter)
+for more details.
+            """.strip(
+        "\\n"
+    )
+)
+st.exception(e)
+`,
+"pages/st_experimental_set_query_params.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+set_query_params = st.button("Set current query params")
+
+if set_query_params:
+    st.experimental_set_query_params(
+        show_map=True,
+        number_of_countries=2,
+        selected=["asia", "america"],
+    )
+`,
+"pages/st_experimental_get_query_params.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+query_params = st.experimental_get_query_params()
+st.write("Current query string is:", str(query_params))
+`,
+"pages/st_form_column_association.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+# Element created in a form located in the sidebar.
+with st.sidebar.form("form_0"):
+    value = st.checkbox("in form 0")
+    st.form_submit_button()
+st.sidebar.write(value)
+
+# Element created in the sidebar, outside the form.
+with st.form("form_1"):
+    "Empty Form 1"
+    value = st.sidebar.checkbox("NOT in form 1")
+    st.form_submit_button()
+value
+
+# Parent block created outside a form; element created inside a form.
+cols = st.columns(2)
+with st.form("form_2"):
+    "Empty Form 2"
+    value = cols[0].checkbox("NOT in form 2")
+    st.form_submit_button()
+value
+
+# Parent block and element created inside a form.
+with st.form("form_3"):
+    cols = st.columns(2)
+    with cols[0]:
+        value = st.checkbox("in form 3")
+    st.form_submit_button()
+value
+
+# Parent block created inside a form; element created outside a form.
+with st.form("form_4"):
+    cols = st.columns(2)
+    st.form_submit_button()
+value = cols[0].checkbox("in form 4")
+value
+
+# DG created outside a form; element created inside a form.
+empty = st.empty()
+with st.form("form_5"):
+    "Empty Form 5"
+    value = empty.checkbox("NOT in form 5")
+    st.form_submit_button()
+value
+
+# DG created inside a form; element created outside a form.
+with st.form("form_6"):
+    empty = st.empty()
+    st.form_submit_button()
+value = empty.checkbox("in form 6")
+value
+
+# Element created directly on a form block.
+form = st.form("form_7")
+value = form.checkbox("in form 7")
+form.form_submit_button()
+value
+
+# Forms inside columns.
+cols = st.columns(2)
+with cols[0]:
+    with st.form("form_8"):
+        value = st.checkbox("in form 8")
+        st.form_submit_button()
+    value
+with cols[1]:
+    with st.form("form_9"):
+        value = st.checkbox("in form 9")
+        st.form_submit_button()
+    value
+`,
+"pages/st_image.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import io
+from typing import TYPE_CHECKING, Any
+
+import numpy as np
+from PIL import Image, ImageDraw
+
+import streamlit as st
+
+if TYPE_CHECKING:
+    import numpy.typing as npt
+
+
+def create_gif(size, frames=1):
+    # Create grayscale image.
+    im = Image.new("L", (size, size), "white")
+
+    images = []
+
+    # Make circle of a constant size with a number of frames, moving across the
+    # principal diagonal of a 64x64 image. The GIF will not loop and stops
+    # animating after frames x 100ms.
+    for i in range(0, frames):
+        frame = im.copy()
+        draw = ImageDraw.Draw(frame)
+        pos = (i, i)
+        circle_size = size / 2
+        draw.ellipse([pos, tuple(p + circle_size for p in pos)], "black")
+        images.append(frame.copy())
+
+    # Save the frames as an animated GIF
+    data = io.BytesIO()
+    images[0].save(
+        data,
+        format="GIF",
+        save_all=True,
+        append_images=images[1:],
+        duration=1,
+    )
+
+    return data.getvalue()
+
+
+img = np.repeat(0, 10000).reshape(100, 100)
+img800 = np.repeat(0, 640000).reshape(800, 800)
+gif = create_gif(64, frames=32)
+
+st.image(img, caption="Black Square as JPEG", output_format="JPEG", width=100)
+
+st.image(img, caption="Black Square as PNG", output_format="PNG", width=100)
+
+st.image(img, caption="Black Square with no output format specified", width=100)
+
+transparent_img: "npt.NDArray[Any]" = np.zeros((100, 100, 4), dtype=np.uint8)
+st.image(transparent_img, caption="Transparent Black Square", width=100)
+
+col1, col2, col3 = st.columns(3)
+col2.image(img)  # 100
+col2.image(img, use_column_width="auto")  # 100
+
+col2.image(img, use_column_width="never")  # 100
+col2.image(img, use_column_width=False)  # 100
+
+col2.image(img, use_column_width="always")  # column
+col2.image(img, use_column_width=True)  # column
+
+col2.image(img800, use_column_width="auto")  # column
+
+st.image(
+    """
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="100">
+<text x="0" y="50">"I am a quote" - https://avatars.githubusercontent.com/karriebear</text>
+</svg>
+"""
+)
+
+st.image(
+    """<?xml version="1.0" encoding="utf-8"?>
+    <!-- Generator: Adobe Illustrator 17.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="100">
+    <text x="0" y="50">"I am prefixed with some meta tags</text>
+    </svg>
+"""
+)
+
+st.image(gif, width=100)
+st.image(create_gif(64), caption="Black Circle as GIF", width=100)
+st.image(gif, caption="GIF as PNG", output_format="PNG", width=100)
+`,
+"pages/st_image_replay.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import io
+
+import numpy as np
+from PIL import Image, ImageDraw
+
+import streamlit as st
+
+
+def create_gif(size, frames=1):
+    # Create grayscale image.
+    im = Image.new("L", (size, size), "white")
+
+    images = []
+
+    # Make circle of a constant size with a number of frames, moving across the
+    # principal diagonal of a 64x64 image. The GIF will not loop and stops
+    # animating after frames x 100ms.
+    for i in range(0, frames):
+        frame = im.copy()
+        draw = ImageDraw.Draw(frame)
+        pos = (i, i)
+        circle_size = size / 2
+        draw.ellipse([pos, tuple(p + circle_size for p in pos)], "black")
+        images.append(frame.copy())
+
+    # Save the frames as an animated GIF
+    data = io.BytesIO()
+    images[0].save(
+        data,
+        format="GIF",
+        save_all=True,
+        append_images=images[1:],
+        duration=1,
+    )
+
+    return data.getvalue()
+
+
+img = np.repeat(0, 10000).reshape(100, 100)
+gif = create_gif(64, frames=32)
+
+
+@st.cache_data
+def numpy_image():
+    st.image(img, caption="Black Square with no output format specified", width=100)
+
+
+numpy_image()
+numpy_image()
+
+
+@st.cache_data
+def svg_image():
+    st.image(
+        """
+<svg>
+  <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
+</svg>
+    """
+    )
+
+
+svg_image()
+svg_image()
+
+
+@st.cache_data
+def gif_image():
+    st.image(gif, width=100)
+
+
+gif_image()
+gif_image()
+
+
+@st.cache_data
+def url_image():
+    st.image("https://avatars.githubusercontent.com/anoctopus", width=200)
+
+
+url_image()
+url_image()
+`,
+"pages/st_image_replay_old_image.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import numpy as np
+
+import streamlit as st
+
+img = np.repeat(0, 10000).reshape(100, 100)
+
+
+@st.experimental_memo
+def image():
+    st.image(img)
+
+
+if st.checkbox("show image", True):
+    image()
+`,
+"pages/st_image_svg_sizing.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+st.image(
+    """
+<svg>
+  <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
+  Sorry, your browser does not support inline SVG.
+</svg>
+"""
+)
+
+SVG_RED_CIRCLE = """
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
+  Sorry, your browser does not support inline SVG.
+</svg>
+"""
+
+st.image(SVG_RED_CIRCLE)
+st.image(SVG_RED_CIRCLE, width=300)
+
+
+SVG_YELLOW_GREEN_RECTANGLE = """
+<svg viewBox="{x} 0 100 90" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="100" height="90" fill="yellow" />
+    <rect x="100" y="0" width="100" height="90" fill="green" />
+</svg>
+"""
+
+st.image(SVG_YELLOW_GREEN_RECTANGLE.format(x=50), width=100)
+st.image(SVG_YELLOW_GREEN_RECTANGLE.format(x=50), width=300)
+
+st.image(SVG_YELLOW_GREEN_RECTANGLE.format(x=0), width=100)
+st.image(SVG_YELLOW_GREEN_RECTANGLE.format(x=0), width=300)
+
+st.image(SVG_YELLOW_GREEN_RECTANGLE.format(x=100), width=100)
+st.image(SVG_YELLOW_GREEN_RECTANGLE.format(x=100), width=300)
+`,
+"pages/st_json.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+data = {"foo": "bar"}
+st.json(data)
+st.json(data, expanded=False)
+data = {"Hello     World": "Foo    Bar"}
+st.json(data)
+`,
+"pages/st_map.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from typing import Any, cast
+
+import numpy as np
+import pandas as pd
+
+import streamlit as st
+
+"""
+### Empty map
+"""
+
+st.map()
+
+
+"""
+### Simple map
+"""
+
+# Cast is needed due to mypy not understanding the outcome of dividing
+# an array by a list of numbers.
+np.random.seed(0)
+coords: "np.typing.NDArray[np.float_]" = cast(
+    Any,
+    np.random.randn(1000, 2) / [50, 50],
+) + [37.76, -122.4]
+df = pd.DataFrame(coords, columns=["lat", "lon"])
+
+st.map(df)
+
+
+"""
+### Simple map with zoom
+"""
+
+st.map(df, zoom=8)
+
+
+"""
+### Map with color and size layers
+"""
+
+df = pd.DataFrame(
+    {
+        "xlat": [38.8762997, 38.8742997, 38.9025842],
+        "xlon": [-77.0037, -77.0057, -77.0556545],
+        "color": ["#f00", "#f0f", "#00f"],
+        "size": [1000, 500, 300],
+    }
+)
+
+st.map(
+    df,
+    latitude="xlat",
+    longitude="xlon",
+    color="color",
+    size="size",
+)
+`,
+"pages/st_media_replay.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import requests
+
+import streamlit as st
+
+
+@st.experimental_memo
+def audio():
+    url = "https://www.w3schools.com/html/horse.ogg"
+    file = requests.get(url).content
+    st.audio(file)
+
+
+@st.experimental_memo
+def video():
+    url = "https://www.w3schools.com/html/mov_bbb.mp4"
+    file = requests.get(url).content
+    st.video(file)
+
+
+audio()
+video()
+`,
+"pages/st_pydeck_chart.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import math
+from typing import Any, cast
+
+import numpy as np
+import pandas as pd
+import pydeck as pdk
+
+import streamlit as st
+
+# Empty chart.
+
+st.pydeck_chart()
+
+# Basic chart.
+
+np.random.seed(12345)
+
+df = pd.DataFrame(
+    cast(Any, np.random.randn(1000, 2) / [50, 50]) + [37.76, -122.4],
+    columns=["lat", "lon"],
+)
+
+st.pydeck_chart(
+    pdk.Deck(
+        map_style="mapbox://styles/mapbox/light-v9",
+        initial_view_state=pdk.ViewState(
+            latitude=37.76,
+            longitude=-122.4,
+            zoom=11,
+            pitch=50,
+        ),
+        layers=[
+            pdk.Layer(
+                "HexagonLayer",
+                data=df,
+                get_position="[lon, lat]",
+                radius=200,
+                elevation_scale=4,
+                elevation_range=[0, 1000],
+                pickable=True,
+                extruded=True,
+            ),
+            pdk.Layer(
+                "ScatterplotLayer",
+                data=df,
+                get_position="[lon, lat]",
+                get_color="[200, 30, 0, 160]",
+                get_radius=200,
+            ),
+        ],
+    )
+)
+
+# Chart w/ invalid JSON - issue #5799.
+data = pd.DataFrame({"lng": [-109.037673], "lat": [36.994672], "weight": [math.nan]})
+layer = pdk.Layer(
+    "ScatterplotLayer", data=data, get_position=["lng", "lat"], radius_min_pixels=4
+)
+deck = pdk.Deck(
+    layers=[layer],
+    map_style=pdk.map_styles.CARTO_LIGHT,
+    tooltip={"text": "weight: {weight}"},
+)
+st.pydeck_chart(deck, use_container_width=True)
+`,
+"pages/st_pydeck_geo_layers.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import pandas as pd
+import pydeck as pdk
+
+import streamlit as st
+
+H3_HEX_DATA = [
+    {"hex": "88283082b9fffff", "count": 10},
+    {"hex": "88283082d7fffff", "count": 50},
+    {"hex": "88283082a9fffff", "count": 100},
+]
+df = pd.DataFrame(H3_HEX_DATA)
+
+st.pydeck_chart(
+    pdk.Deck(
+        map_style="mapbox://styles/mapbox/light-v9",
+        tooltip={"text": "Count: {count}"},
+        initial_view_state=pdk.ViewState(
+            latitude=37.7749295, longitude=-122.4194155, zoom=12, bearing=0, pitch=30
+        ),
+        layers=[
+            pdk.Layer(
+                "H3HexagonLayer",
+                df,
+                pickable=True,
+                stroked=True,
+                filled=True,
+                get_hexagon="hex",
+                get_fill_color="[0, 255, 0]",
+                get_line_color=[255, 255, 255],
+                line_width_min_pixels=2,
+            ),
+        ],
+    )
+)
+`,
+"pages/st_reuse_label.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+if st.button("Rerun test"):
+    st.test_run_count = -1
+
+if hasattr(st, "test_run_count"):
+    st.test_run_count += 1
+else:
+    st.test_run_count = 0 if st.get_option("server.headless") else -1
+
+if st.test_run_count < 1:
+    w1 = st.slider("label", 0, 100, 25, 1)
+else:
+    w1 = st.selectbox("label", ("m", "f"), 1)
+
+st.write("value 1:", w1)
+st.write("test_run_count:", st.test_run_count)
+st.write(
+    """
+    If this is failing locally, it could be because you have a browser with
+    Streamlit open. Close it and the test should pass.
+"""
+)
+# TODO: Use session-specific state for test_run_count, to fix the issue above.
+`,
+"pages/st_select_slider.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import numpy as np
+import pandas as pd
+
+import streamlit as st
+from streamlit import runtime
+
+w1 = st.select_slider(
+    "Label 1",
+    value=("orange", "blue"),
+    options=["red", "orange", "yellow", "green", "blue", "indigo", "violet"],
+)
+st.write("Value 1:", w1)
+
+w2 = st.select_slider(
+    "Label 2",
+    options=np.array([1, 2, 3, 4, 5]),
+)
+st.write("Value 2:", w2)
+
+w3 = st.select_slider(
+    "Label 3",
+    value=[2, 5],
+    options=pd.Series([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+)
+st.write("Value 3:", w3)
+
+w4 = st.select_slider(
+    "Label 4",
+    value=5,
+    options=pd.DataFrame(
+        {
+            "first column": [1, 2, 3, 4, 5],
+            "second column": [10, 20, 30, 40, 50],
+        }
+    ),
+)
+st.write("Value 4:", w4)
+
+w5 = st.select_slider(
+    "Label 5",
+    value=("orange", "blue"),
+    options=["red", "orange", "yellow", "green", "blue", "indigo", "violet"],
+    disabled=True,
+)
+st.write("Value 5:", w5)
+
+w6 = st.select_slider(
+    "Label 6",
+    options=["red", "orange", "yellow", "green", "blue", "indigo", "violet"],
+    label_visibility="hidden",
+)
+
+st.write("Value 6:", w6)
+
+
+w7 = st.select_slider(
+    "Label 7",
+    options=["red", "orange", "yellow", "green", "blue", "indigo", "violet"],
+    label_visibility="collapsed",
+)
+
+st.write("Value 7:", w7)
+
+if runtime.exists():
+
+    def on_change():
+        st.session_state.select_slider_changed = True
+
+    st.select_slider(
+        "Label 8",
+        options=np.array([1, 2, 3, 4, 5]),
+        key="select_slider8",
+        on_change=on_change,
+    )
+    st.write("Value 8:", st.session_state.select_slider8)
+    st.write("Select slider changed:", "select_slider_changed" in st.session_state)
+
+with st.expander("Expander", expanded=True):
+    w9 = st.select_slider(
+        label="Label 9",
+        options=["foo", "bar", "baz", "This is a very, very long option"],
+        value="This is a very, very long option",
+    )
+
+    st.write("Value 9:", w9)
+`,
+"pages/st_session_state.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+from streamlit import runtime
+
+# st.session_state can only be accessed while running with streamlit
+if runtime.exists():
+    if "initialized" not in st.session_state:
+        st.session_state["item_counter"] = 0
+        st.session_state.attr_counter = 0
+
+        st.session_state.initialized = True
+
+    if st.button("inc_item_counter"):
+        st.session_state["item_counter"] += 1
+
+    if st.button("inc_attr_counter"):
+        st.session_state.attr_counter += 1
+
+    if st.button("del_item_counter"):
+        del st.session_state["item_counter"]
+
+    if st.button("del_attr_counter"):
+        del st.session_state.attr_counter
+
+    if "item_counter" in st.session_state:
+        st.write(f"item_counter: {st.session_state['item_counter']}")
+
+    if "attr_counter" in st.session_state:
+        st.write(f"attr_counter: {st.session_state.attr_counter}")
+
+    st.write(f"len(st.session_state): {len(st.session_state)}")
+    st.write(st.session_state)
+`,
+"pages/st_set_page_config.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+st.set_page_config(
+    page_title="Heya, world?",
+    page_icon=":shark:",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+st.sidebar.button("Sidebar!")
+st.markdown("Main!")
+
+
+def show_balloons():
+    st.balloons()
+
+
+st.button("Balloons", on_click=show_balloons)
+
+
+def double_set_page_config():
+    st.set_page_config(
+        page_title="Change 1",
+        page_icon=":shark:",
+        layout="wide",
+        initial_sidebar_state="collapsed",
+    )
+
+    st.set_page_config(
+        page_title="Change 2",
+        page_icon=":shark:",
+        layout="wide",
+        initial_sidebar_state="collapsed",
+    )
+
+
+st.button("Double Set Page Config", on_click=double_set_page_config)
+
+
+def single_set_page_config():
+    st.set_page_config(
+        page_title="Change 3",
+        page_icon=":shark:",
+        layout="wide",
+        initial_sidebar_state="collapsed",
+    )
+
+
+st.button("Single Set Page Config", on_click=single_set_page_config)
+`,
+"pages/st_sidebar.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from datetime import date, datetime
+
+import streamlit as st
+
+w1 = st.sidebar.date_input("Label 1", date(1970, 1, 1))
+st.write("Value 1:", w1)
+
+w2 = st.sidebar.date_input("Label 2", datetime(2019, 7, 6, 21, 15))
+st.write("Value 2:", w2)
+
+x = st.sidebar.text("overwrite me")
+x.text("overwritten")
+y = st.sidebar.text_input("type here")
+
+# TODO: add more tests such as markdown elements and also a test that takes screenshot of complete app to verify alignment of elements
+`,
+"pages/st_slider.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from datetime import date
+
+import streamlit as st
+from streamlit import runtime
+
+s1 = st.sidebar.slider("Label A", 0, 12345678, 12345678)
+st.sidebar.write("Value A:", s1)
+
+r1 = st.sidebar.slider("Range A", 10000, 25000, [10000, 25000])
+st.sidebar.write("Range Value A:", r1)
+
+with st.sidebar.expander("Expander", expanded=True):
+    s2 = st.slider("Label B", 10000, 25000, 10000)
+    st.write("Value B:", s2)
+
+    r2 = st.slider("Range B", 10000, 25000, [10000, 25000])
+    st.write("Range Value B:", r2)
+
+w1 = st.slider("Label 1", 0, 100, 25, 1)
+st.write("Value 1:", w1)
+
+w2 = st.slider("Label 2", 0.0, 100.0, (25.0, 75.0), 0.5)
+st.write("Value 2:", w2)
+
+w3 = st.slider(
+    "Label 3 - This is a very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long label",
+    0,
+    100,
+    1,
+    1,
+)
+st.write("Value 3:", w3)
+
+w4 = st.slider("Label 4", 10000, 25000, 10000, disabled=True)
+st.write("Value 4:", w4)
+
+w5 = st.slider("Label 5", 0, 100, 25, 1, label_visibility="hidden")
+st.write("Value 5:", w5)
+
+w6 = st.slider("Label 6", 0, 100, 36, label_visibility="collapsed")
+st.write("Value 6:", w6)
+
+dates = st.slider(
+    "Label 7",
+    min_value=date(2019, 8, 1),
+    max_value=date(2021, 6, 4),
+    value=(date(2019, 8, 1), date(2019, 9, 1)),
+)
+st.write("Value 7:", dates[0], dates[1])
+
+if runtime.exists():
+
+    def on_change():
+        st.session_state.slider_changed = True
+
+    st.slider(
+        "Label 8",
+        min_value=0,
+        max_value=100,
+        value=25,
+        step=1,
+        key="slider8",
+        on_change=on_change,
+    )
+    st.write("Value 8:", st.session_state.slider8)
+    st.write("Slider changed:", "slider_changed" in st.session_state)
+`,
+"pages/st_tabs.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+
+tab1, tab2, tab3 = st.tabs(["Tab 1", "Tab 2", "Tab 3"])
+
+with tab1:
+    st.write("tab1")
+    st.text_input("Text input")
+
+with tab2:
+    st.write("tab2")
+    st.number_input("Number input")
+
+with tab3:
+    st.write("tab3")
+    st.date_input("Date input")
+
+with st.expander("Expander", expanded=True):
+    many_tabs = st.tabs([f"Tab {i}" for i in range(25)])
+
+sidebar_tab1, sidebar_tab2 = st.sidebar.tabs(["Foo", "Bar"])
+sidebar_tab1.write("I am in the sidebar")
+sidebar_tab2.write("I'm also in the sidebar")
+`,
+"pages/st_tooltips.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from datetime import datetime
+
+import streamlit as st
+
+default_tooltip = """
+This is a really long tooltip.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ut turpis vitae
+justo ornare venenatis a vitae leo. Donec mollis ornare ante, eu ultricies
+tellus ornare eu. Donec eros risus, ultrices ut eleifend vel, auctor eu turpis.
+In consectetur erat vel ante accumsan, a egestas urna aliquet. Nullam eget
+sapien eget diam euismod eleifend. Nulla purus enim, finibus ut velit eu,
+malesuada dictum nulla. In non arcu et risus maximus fermentum eget nec ante.
+""".strip()
+
+leading_indent_code_tooltip = """
+Code:
+
+    This
+    is
+    a
+    code
+    block!"""
+
+leading_indent_regular_text_tooltip = """
+This is a regular text block!
+Test1
+Test2
+
+"""
+
+indented_code_tooltip = """
+Code:
+
+    for i in range(10):
+        x = i * 10
+        print(x)
+    """
+
+no_indent_tooltip = "thisisatooltipwithnoindents. It has some spaces but no idents."
+
+st.text_input("some input text", "default text", help=default_tooltip)
+st.number_input("number input", value=1, help=leading_indent_code_tooltip)
+st.checkbox("some checkbox", help=leading_indent_regular_text_tooltip)
+st.radio("best animal", ("tiger", "giraffe", "bear"), 0, help=indented_code_tooltip)
+st.selectbox("selectbox", ("a", "b", "c"), 0, help=default_tooltip)
+st.time_input("time", datetime(2019, 7, 6, 21, 15), help=leading_indent_code_tooltip)
+st.date_input(
+    "date", datetime(2019, 7, 6, 21, 15), help=leading_indent_regular_text_tooltip
+)
+st.slider("slider", 0, 100, 50, help=indented_code_tooltip)
+st.color_picker("color picker", help=no_indent_tooltip)
+st.file_uploader("file uploader", help=default_tooltip)
+st.multiselect(
+    "multiselect", ["a", "b", "c"], ["a", "b"], help=leading_indent_code_tooltip
+)
+st.text_area("textarea", help=leading_indent_regular_text_tooltip)
+st.select_slider("selectslider", options=["a", "b", "c"], help=indented_code_tooltip)
+st.button("some button", help=no_indent_tooltip)
+st.metric("some metric", value=500, help=no_indent_tooltip)
+
+# Insert some space, otherwise the last tooltip is overlapping
+st.write("--")
+`,
+"pages/websocket_reconnects.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+from streamlit import runtime
+
+# st.session_state can only be accessed while running with streamlit
+if runtime.exists():
+    if "counter" not in st.session_state:
+        st.session_state.counter = 0
+
+    if st.button("click me!"):
+        st.session_state.counter += 1
+
+    st.write(f"count: {st.session_state.counter}")
+
+    if f := st.file_uploader("Upload a file"):
+        st.text(f.read())
+
+    if img := st.camera_input("Take a picture"):
+        st.image(img)
+`,
+"pages/widget_state_heavy_usage.py": `# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2024)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import time
+
+import streamlit as st
+
+number = st.number_input("test", value=100)
+st.write(number)
+
+time.sleep(1)
+`,
+
+},
+  },
+  document.getElementById("root")
+)
+
+    </script>
+  </body>
+  <!-- Generated from Stlite Sharing (https://edit.share.stlite.net/), and the source version is 8413a8fdd17b840f2870bdb8f43e8781722266bf -->
+</html>

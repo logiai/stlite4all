@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Stlite app</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.1/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.1/build/stlite.js"
+mount(
+  {
+    requirements: ["streamlit>=1.48.0"],
+    entrypoint: "your_app.py",
+    files: {
+"README.md": `## Streamlit Hello demo
+
+This sample app is a copy of the \`widget.page_link\` demo.
+The source files were copied from https://github.com/streamlit/docs/tree/4f1c7ce444b6c3e0a1bba473199c9ddb42ed6866/python/api-examples-source
+
+## License
+
+As written above, the source files are copied from \`https://github.com/streamlit/docs\`,
+therefore, the license applied to the source, the Apache-2.0 license, is also applied to this sample.
+
+See https://github.com/streamlit/docs/blob/main/LICENSE
+`,
+"your_app.py": `import streamlit as st
+
+st.page_link("your_app.py", label="Home", icon="🏠")
+st.page_link("pages/page_1.py", label="Page 1", icon="1️⃣")
+st.page_link("pages/page_2.py", label="Page 2", icon="2️⃣", disabled=True)
+st.page_link("http://www.google.com", label="Google", icon="🌎")
+`,
+"pages/page_1.py": `import streamlit as st
+
+st.page_link("your_app.py", label="Home", icon="🏠")
+st.page_link("pages/page_1.py", label="Page 1", icon="1️⃣")
+st.page_link("pages/page_2.py", label="Page 2", icon="2️⃣", disabled=True)
+st.page_link("http://www.google.com", label="Google", icon="🌎")
+`,
+"pages/page_2.py": `import streamlit as st
+
+st.page_link("your_app.py", label="Home", icon="🏠")
+st.page_link("pages/page_1.py", label="Page 1", icon="1️⃣")
+st.page_link("pages/page_2.py", label="Page 2", icon="2️⃣", disabled=True)
+st.page_link("http://www.google.com", label="Google", icon="🌎")
+`,
+
+},
+  },
+  document.getElementById("root")
+)
+
+    </script>
+  </body>
+  <!-- Generated from Stlite Sharing (https://edit.share.stlite.net/), and the source version is 8413a8fdd17b840f2870bdb8f43e8781722266bf -->
+</html>
