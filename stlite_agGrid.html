@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Stlite app</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.1/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@0.89.1/build/stlite.js"
+mount(
+  {
+    requirements: ["stmol==0.0.7", "streamlit-aggrid==0.3.4", "streamlit-agraph", "streamlit-cropper", "streamlit-d3-demo", "streamlit-drawable-canvas", "streamlit-embedcode", "streamlit-folium", "streamlit-lottie", "streamlit-player"],
+    entrypoint: "pages/aggrid.py",
+    files: {
+"home.py": `import streamlit as st
+
+st.success("**👈 Select a demo from the sidebar** to see some examples of what the community-based Streamlit custom components can do!")
+
+st.markdown("""
+    We picked up some custom components that work on _stlite_ from [the official featured custom component list](https://streamlit.io/components).
+""")
+`,
+"pages/aggrid.py": `import pandas as pd
+from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
+
+# 示例数据
+data = [
+    {"项目": "万达广场一期景观工程", "成本名称": "景观设计", "成本大类": "间接费用", "单价": 100000, "数量": 1, "成本金额": 100000},
+    {"项目": "万达广场一期景观工程", "成本名称": "水泥", "成本大类": "直接费用", "单价": 20000, "数量": 40, "成本金额": 800000},
+    {"项目": "万达广场一期景观工程", "成本名称": "钢筋", "成本大类": "直接费用", "单价": 20000, "数量": 38, "成本金额": 760000},
+    {"项目": "华润中央公园绿化工程", "成本名称": "绿化设计", "成本大类": "间接费用", "单价": 55000, "数量": 1, "成本金额": 55000},
+    {"项目": "华润中央公园绿化工程", "成本名称": "水泥", "成本大类": "直接费用", "单价": 16000, "数量": 150, "成本金额": 2400000},
+]
+
+df = pd.DataFrame(data)
+
+# 构建 GridOptions
+gb = GridOptionsBuilder.from_dataframe(df)
+gb.configure_default_column(groupable=True, value=True, enableRowGroup=True, aggFunc="sum")
+
+# 设置“项目”为分组列
+gb.configure_column("项目", rowGroup=True, hide=True)
+
+# 设置聚合
+gb.configure_column("单价", aggFunc="avg")
+gb.configure_column("成本金额", aggFunc="sum")
+
+grid_options = gb.build()
+
+# 显示 AgGrid
+AgGrid(
+    df,
+    gridOptions=grid_options,
+    enable_enterprise_modules=True,   # 必须打开，才支持分组
+    allow_unsafe_jscode=True,
+    fit_columns_on_grid_load=True,
+    height=500
+)
+`,
+"pages/agraph.py": `"""
+This sample code has been copied from
+https://github.com/ChrisDelClea/streamlit-agraph
+"""
+
+from streamlit_agraph import agraph, Node, Edge, Config
+
+nodes = []
+edges = []
+nodes.append( Node(id="Spiderman",
+                   label="Peter Parker",
+                   size=25,
+                   shape="circularImage",
+                   image="http://marvel-force-chart.surge.sh/marvel_force_chart_img/top_spiderman.png")
+            ) # includes **kwargs
+nodes.append( Node(id="Captain_Marvel",
+                   size=25,
+                   shape="circularImage",
+                   image="http://marvel-force-chart.surge.sh/marvel_force_chart_img/top_captainmarvel.png")
+            )
+edges.append( Edge(source="Captain_Marvel",
+                   label="friend_of",
+                   target="Spiderman",
+                   # **kwargs
+                   )
+            )
+
+config = Config(width=500,
+                height=500,
+                # **kwargs
+                )
+
+return_value = agraph(nodes=nodes,
+                      edges=edges,
+                      config=config)
+`,
+"pages/cropper.py": `"""
+This sample code has been copied from
+https://github.com/turner-anderson/streamlit-cropper
+"""
+
+import streamlit as st
+from streamlit_cropper import st_cropper
+from PIL import Image
+st.set_option('deprecation.showfileUploaderEncoding', False)
+
+# Upload an image and set some options for demo purposes
+st.header("Cropper Demo")
+img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'])
+realtime_update = st.sidebar.checkbox(label="Update in Real Time", value=True)
+box_color = st.sidebar.color_picker(label="Box Color", value='#0000FF')
+aspect_choice = st.sidebar.radio(label="Aspect Ratio", options=["1:1", "16:9", "4:3", "2:3", "Free"])
+aspect_dict = {
+    "1:1": (1, 1),
+    "16:9": (16, 9),
+    "4:3": (4, 3),
+    "2:3": (2, 3),
+    "Free": None
+}
+aspect_ratio = aspect_dict[aspect_choice]
+
+if img_file:
+    img = Image.open(img_file)
+    if not realtime_update:
+        st.write("Double click to save crop")
+    # Get a cropped image from the frontend
+    cropped_img = st_cropper(img, realtime_update=realtime_update, box_color=box_color,
+                                aspect_ratio=aspect_ratio)
+
+    # Manipulate cropped image at will
+    st.write("Preview")
+    _ = cropped_img.thumbnail((150,150))
+    st.image(cropped_img)
+`,
+"pages/d3_demo.py": `"""
+This sample code has been copied from
+https://github.com/andfanilo/streamlit-d3-demo
+"""
+
+import random
+from streamlit_d3_demo import d3_line
+
+def generate_random_data(x_r, y_r):
+    return list(zip(range(x_r), [random.randint(0, y_r) for _ in range(x_r)]))
+
+d3_line(generate_random_data(20, 500), circle_radius=15, circle_color="#6495ed")
+`,
+"pages/drawable_canvas.py": `"""
+This sample code has been copied from
+https://github.com/andfanilo/streamlit-drawable-canvas
+"""
+
+import pandas as pd
+from PIL import Image
+import streamlit as st
+from streamlit_drawable_canvas import st_canvas
+
+# Specify canvas parameters in application
+drawing_mode = st.sidebar.selectbox(
+    "Drawing tool:", ("point", "freedraw", "line", "rect", "circle", "transform")
+)
+
+stroke_width = st.sidebar.slider("Stroke width: ", 1, 25, 3)
+if drawing_mode == 'point':
+    point_display_radius = st.sidebar.slider("Point display radius: ", 1, 25, 3)
+stroke_color = st.sidebar.color_picker("Stroke color hex: ")
+bg_color = st.sidebar.color_picker("Background color hex: ", "#eee")
+bg_image = st.sidebar.file_uploader("Background image:", type=["png", "jpg"])
+
+realtime_update = st.sidebar.checkbox("Update in realtime", True)
+
+
+
+# Create a canvas component
+canvas_result = st_canvas(
+    fill_color="rgba(255, 165, 0, 0.3)",  # Fixed fill color with some opacity
+    stroke_width=stroke_width,
+    stroke_color=stroke_color,
+    background_color=bg_color,
+    background_image=Image.open(bg_image) if bg_image else None,
+    update_streamlit=realtime_update,
+    height=150,
+    drawing_mode=drawing_mode,
+    point_display_radius=point_display_radius if drawing_mode == 'point' else 0,
+    key="canvas",
+)
+
+# Do something interesting with the image data and paths
+if canvas_result.image_data is not None:
+    st.image(canvas_result.image_data)
+if canvas_result.json_data is not None:
+    objects = pd.json_normalize(canvas_result.json_data["objects"]) # need to convert obj to str because PyArrow
+    for col in objects.select_dtypes(include=['object']).columns:
+        objects[col] = objects[col].astype("str")
+    st.dataframe(objects)
+`,
+"pages/embedcode.py": `"""
+This sample code has been copied from
+https://github.com/randyzwitch/streamlit-embedcode
+"""
+
+import streamlit as st
+from streamlit_embedcode import github_gist
+
+github_gist("https://gist.github.com/randyzwitch/be8c5e9fb5b8e7b046afebcac12e5087/")
+`,
+"pages/folium.py": `"""
+This sample code has been copied from
+https://github.com/randyzwitch/streamlit-folium/blob/master/examples/streamlit_app.py
+"""
+
+import streamlit as st
+
+st.set_page_config(page_title="streamlit-folium documentation")
+
+page = st.sidebar.radio(
+    "Select page", ["Home", "Bi-directional data model", "Plugin: Draw"], index=0
+)
+
+"# streamlit-folium"
+
+if page == "Home":
+    "streamlit-folium integrates two great open-source projects in the Python ecosystem: [Streamlit](https://streamlit.io) and [Folium](https://python-visualization.github.io/folium/)!"
+
+    """
+    Currently, there are two functions defined:
+
+    - \`st_folium()\`: a bi-directional Component, taking a Folium/Branca object and plotting to the Streamlit app. Upon mount/interaction with the Streamlit app, st_folium() returns a Dict with selected information including the bounding box and items clicked on
+
+    - \`folium_static()\`: takes a folium.Map, folium.Figure, or branca.element.Figure object and displays it in a Streamlit app.
+
+    _Note: \`folium_static()\` is based on the \`_repr_html()\` representation created in Folium. This function should be a strict subset the of functionality of the newer \`st_folium()\` function._
+
+    It is recommended that users switch to \`st_folium()\` as soon as possible, as \`folium_static()\` will likely be deprecated. If there is a reason why \`folium_static()\` needs to remain, please leave a [GitHub issue](https://github.com/randyzwitch/streamlit-folium/issues) describing your use-case.
+    """
+
+
+    "---"
+    "### Basic \`st_folium()\` Example"
+
+    with st.echo():
+
+        import streamlit as st
+        from streamlit_folium import st_folium
+        import folium
+
+        # center on Liberty Bell, add marker
+        m = folium.Map(location=[39.949610, -75.150282], zoom_start=16)
+        folium.Marker(
+            [39.949610, -75.150282],
+            popup="Liberty Bell",
+            tooltip="Liberty Bell"
+        ).add_to(m)
+
+        # call to render Folium map in Streamlit
+        st_data = st_folium(m, width = 725)
+
+elif page == "Bi-directional data model":
+    """
+    On its own, Folium is limited to _display-only_ visualizations; the Folium API generates the proper [leaflet.js](https://leafletjs.com/) specification,
+    as HTML and displays it. Some interactivity is provided (depending on how the Folium API is utilized), but the biggest drawback
+    is that the interactivity from the visualization isn't passed back to Python, and as such, you can't make full use of the functionality
+    provided by the leaflet.js library.
+
+    \`streamlit-folium\` builds upon the convenient [Folium API](https://python-visualization.github.io/folium/modules.html)
+    for building geospatial visualizations by adding a _bi-directional_ data transfer functionality. This not only allows for increased interactivity between
+    the web browser and Python, but also the use of larger datasets through intelligent querying.
+
+    ### Bi-directional data model
+
+    If we take a look at the example from the Home page, it might seem trivial. We define a single point with a marker and pop-up and display it:
+    """
+    with st.echo():
+
+        import streamlit as st
+        from streamlit_folium import st_folium
+        import folium
+
+        # center on Liberty Bell, add marker
+        m = folium.Map(location=[39.949610, -75.150282], zoom_start=16)
+        folium.Marker(
+            [39.949610, -75.150282],
+            popup="Liberty Bell",
+            tooltip="Liberty Bell"
+        ).add_to(m)
+
+        # call to render Folium map in Streamlit
+        st_data = st_folium(m, width = 725)
+
+    """
+    But behind the scenes, a lot more is happening _by default_. The return value of \`st_folium\` is set to
+    \`st_data\`, and within this Python variable is information about what is being displayed on the screen:
+    """
+
+    with st.expander("Expand to see data returned to Python"):
+        st_data
+
+    """
+    As the user interacts with the data visualization, the values for \`bounds\` are constantly updating, along
+    with \`zoom\`. With these values available in Python, we can now limit queries based on bounding box, change
+    the marker size based on the \`zoom\` value and much more!
+    """
+
+elif page == "Plugin: Draw":
+
+    """
+    Folium supports some of the [most popular leaflet plugins](https://python-visualization.github.io/folium/plugins.html). In this example,
+    we can add the [\`Draw\`](https://python-visualization.github.io/folium/plugins.html#folium.plugins.Draw) plugin to our map, which allows for drawing geometric shapes on the map.
+
+    When a shape is drawn on the map, the coordinates that represent that shape are passed back as a geojson feature via
+    the \`all_drawings\` and \`last_active_drawing\` data fields.
+
+    Draw something below to see the return value back to Streamlit!
+    """
+
+    with st.echo():
+
+        import folium
+        import streamlit as st
+        from folium.plugins import Draw
+        from streamlit_folium import st_folium
+
+        m = folium.Map(location=[39.949610, -75.150282], zoom_start=5)
+        Draw(export=True).add_to(m)
+
+        c1, c2 = st.columns(2)
+        with c1:
+            output = st_folium(m, width = 700, height=500)
+
+        with c2:
+            st.write(output)
+`,
+"pages/player.py": `"""
+This sample code has been copied from
+https://github.com/okld/streamlit-player
+"""
+
+from streamlit_player import st_player
+
+# Embed a youtube video
+st_player("https://youtu.be/CmSKVW1v0xM")
+
+# Embed a music from SoundCloud
+st_player("https://soundcloud.com/imaginedragons/demons")
+`,
+"pages/lottie.py": `"""
+This sample code has been copied from
+https://github.com/andfanilo/streamlit-lottie
+"""
+
+import asyncio
+# import requests
+import json
+
+import streamlit as st
+from streamlit_lottie import st_lottie
+from streamlit_lottie import st_lottie_spinner
+
+import pyodide.http  # urllib or requests cannot be used in the Pyodide environment where stlite runs, so we use \`pyodide.http\` module instead. See https://pyodide.org/en/stable/usage/faq.html#how-can-i-load-external-files-in-pyodide
+
+
+def load_lottieurl(url: str):
+    return json.loads(pyodide.http.open_url(url).getvalue())
+
+
+lottie_url_hello = "https://assets5.lottiefiles.com/packages/lf20_V9t630.json"
+lottie_url_download = "https://assets4.lottiefiles.com/private_files/lf30_t26law.json"
+lottie_hello = load_lottieurl(lottie_url_hello)
+lottie_download = load_lottieurl(lottie_url_download)
+
+
+st_lottie(lottie_hello, key="hello")
+
+if st.button("Download"):
+    with st_lottie_spinner(lottie_download, key="download"):
+        await asyncio.sleep(5)
+    st.balloons()
+`,
+"pages/stmol.py": `"""
+This sample code has been copied from
+https://github.com/napoles-uach/stmol
+"""
+
+from stmol import showmol
+import py3Dmol
+# 1A2C
+# Structure of thrombin inhibited by AERUGINOSIN298-A from a BLUE-GREEN ALGA
+xyzview = py3Dmol.view(query='pdb:1A2C')
+xyzview.setStyle({'cartoon':{'color':'spectrum'}})
+showmol(xyzview, height = 500,width=800)
+`,
+
+},
+  },
+  document.getElementById("root")
+)
+
+    </script>
+  </body>
+  <!-- Generated from Stlite Sharing (https://edit.share.stlite.net/), and the source version is 8413a8fdd17b840f2870bdb8f43e8781722266bf -->
+</html>
